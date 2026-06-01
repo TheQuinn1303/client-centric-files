@@ -67,6 +67,6 @@ export async function logAction(opts: {
     acao: opts.acao,
     entidade: opts.entidade,
     registro_id: opts.registro_id ?? null,
-    detalhes: opts.detalhes ?? null,
+    detalhes: (opts.detalhes ?? null) as never,
   });
 }
