@@ -14,16 +14,239 @@ export type Database = {
   }
   public: {
     Tables: {
-      [_ in never]: never
+      categorias: {
+        Row: {
+          created_at: string
+          descricao: string | null
+          id: string
+          nome: string
+        }
+        Insert: {
+          created_at?: string
+          descricao?: string | null
+          id?: string
+          nome: string
+        }
+        Update: {
+          created_at?: string
+          descricao?: string | null
+          id?: string
+          nome?: string
+        }
+        Relationships: []
+      }
+      clientes: {
+        Row: {
+          cnpj: string | null
+          created_at: string
+          created_by: string | null
+          email: string | null
+          id: string
+          nome_fantasia: string | null
+          observacoes: string | null
+          razao_social: string
+          responsavel: string | null
+          status: Database["public"]["Enums"]["cliente_status"]
+          telefone: string | null
+          updated_at: string
+        }
+        Insert: {
+          cnpj?: string | null
+          created_at?: string
+          created_by?: string | null
+          email?: string | null
+          id?: string
+          nome_fantasia?: string | null
+          observacoes?: string | null
+          razao_social: string
+          responsavel?: string | null
+          status?: Database["public"]["Enums"]["cliente_status"]
+          telefone?: string | null
+          updated_at?: string
+        }
+        Update: {
+          cnpj?: string | null
+          created_at?: string
+          created_by?: string | null
+          email?: string | null
+          id?: string
+          nome_fantasia?: string | null
+          observacoes?: string | null
+          razao_social?: string
+          responsavel?: string | null
+          status?: Database["public"]["Enums"]["cliente_status"]
+          telefone?: string | null
+          updated_at?: string
+        }
+        Relationships: []
+      }
+      documentos: {
+        Row: {
+          caminho_storage: string
+          categoria_id: string | null
+          cliente_id: string
+          created_at: string
+          created_by: string | null
+          documento_pai_id: string | null
+          id: string
+          nome_arquivo: string
+          nome_original: string
+          observacao: string | null
+          tamanho: number
+          tipo_arquivo: string
+          updated_at: string
+          versao: number
+        }
+        Insert: {
+          caminho_storage: string
+          categoria_id?: string | null
+          cliente_id: string
+          created_at?: string
+          created_by?: string | null
+          documento_pai_id?: string | null
+          id?: string
+          nome_arquivo: string
+          nome_original: string
+          observacao?: string | null
+          tamanho: number
+          tipo_arquivo: string
+          updated_at?: string
+          versao?: number
+        }
+        Update: {
+          caminho_storage?: string
+          categoria_id?: string | null
+          cliente_id?: string
+          created_at?: string
+          created_by?: string | null
+          documento_pai_id?: string | null
+          id?: string
+          nome_arquivo?: string
+          nome_original?: string
+          observacao?: string | null
+          tamanho?: number
+          tipo_arquivo?: string
+          updated_at?: string
+          versao?: number
+        }
+        Relationships: [
+          {
+            foreignKeyName: "documentos_categoria_id_fkey"
+            columns: ["categoria_id"]
+            isOneToOne: false
+            referencedRelation: "categorias"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "documentos_cliente_id_fkey"
+            columns: ["cliente_id"]
+            isOneToOne: false
+            referencedRelation: "clientes"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "documentos_documento_pai_id_fkey"
+            columns: ["documento_pai_id"]
+            isOneToOne: false
+            referencedRelation: "documentos"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      logs: {
+        Row: {
+          acao: string
+          data_hora: string
+          detalhes: Json | null
+          entidade: string
+          id: string
+          registro_id: string | null
+          usuario_id: string | null
+          usuario_nome: string | null
+        }
+        Insert: {
+          acao: string
+          data_hora?: string
+          detalhes?: Json | null
+          entidade: string
+          id?: string
+          registro_id?: string | null
+          usuario_id?: string | null
+          usuario_nome?: string | null
+        }
+        Update: {
+          acao?: string
+          data_hora?: string
+          detalhes?: Json | null
+          entidade?: string
+          id?: string
+          registro_id?: string | null
+          usuario_id?: string | null
+          usuario_nome?: string | null
+        }
+        Relationships: []
+      }
+      profiles: {
+        Row: {
+          created_at: string
+          email: string
+          id: string
+          nome: string
+          status: string
+        }
+        Insert: {
+          created_at?: string
+          email: string
+          id: string
+          nome: string
+          status?: string
+        }
+        Update: {
+          created_at?: string
+          email?: string
+          id?: string
+          nome?: string
+          status?: string
+        }
+        Relationships: []
+      }
+      user_roles: {
+        Row: {
+          created_at: string
+          id: string
+          role: Database["public"]["Enums"]["app_role"]
+          user_id: string
+        }
+        Insert: {
+          created_at?: string
+          id?: string
+          role: Database["public"]["Enums"]["app_role"]
+          user_id: string
+        }
+        Update: {
+          created_at?: string
+          id?: string
+          role?: Database["public"]["Enums"]["app_role"]
+          user_id?: string
+        }
+        Relationships: []
+      }
     }
     Views: {
       [_ in never]: never
     }
     Functions: {
-      [_ in never]: never
+      has_role: {
+        Args: {
+          _role: Database["public"]["Enums"]["app_role"]
+          _user_id: string
+        }
+        Returns: boolean
+      }
     }
     Enums: {
-      [_ in never]: never
+      app_role: "admin" | "usuario"
+      cliente_status: "ativo" | "inativo"
     }
     CompositeTypes: {
       [_ in never]: never
@@ -150,6 +373,9 @@ export type CompositeTypes<
 
 export const Constants = {
   public: {
-    Enums: {},
+    Enums: {
+      app_role: ["admin", "usuario"],
+      cliente_status: ["ativo", "inativo"],
+    },
   },
 } as const
