@@ -45,13 +45,14 @@ function ErrorComponent({ error, reset }: { error: Error; reset: () => void }) {
   return (
     <div className="flex min-h-screen items-center justify-center bg-background px-4">
       <div className="max-w-md text-center">
-        <h1 className="text-xl font-semibold tracking-tight text-foreground">
-          Algo deu errado
-        </h1>
+        <h1 className="text-xl font-semibold tracking-tight text-foreground">Algo deu errado</h1>
         <p className="mt-2 text-sm text-muted-foreground">{error.message}</p>
         <div className="mt-6 flex flex-wrap justify-center gap-2">
           <button
-            onClick={() => { router.invalidate(); reset(); }}
+            onClick={() => {
+              router.invalidate();
+              reset();
+            }}
             className="inline-flex items-center justify-center rounded-md bg-primary px-4 py-2 text-sm font-medium text-primary-foreground transition-colors hover:bg-primary/90"
           >
             Tentar novamente
@@ -77,10 +78,24 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
       { name: "description", content: "Sistema centralizado de gestão de documentos de clientes." },
       { property: "og:title", content: "DocFlow — Gestão de Documentos" },
       { name: "twitter:title", content: "DocFlow — Gestão de Documentos" },
-      { property: "og:description", content: "Sistema centralizado de gestão de documentos de clientes." },
-      { name: "twitter:description", content: "Sistema centralizado de gestão de documentos de clientes." },
-      { property: "og:image", content: "https://pub-bb2e103a32db4e198524a2e9ed8f35b4.r2.dev/3f989cef-1339-4043-acec-85c5a7c0ce41/id-preview-e5447df8--eceaee76-b9e9-48df-a3dc-9fdd9a05517d.lovable.app-1780344041421.png" },
-      { name: "twitter:image", content: "https://pub-bb2e103a32db4e198524a2e9ed8f35b4.r2.dev/3f989cef-1339-4043-acec-85c5a7c0ce41/id-preview-e5447df8--eceaee76-b9e9-48df-a3dc-9fdd9a05517d.lovable.app-1780344041421.png" },
+      {
+        property: "og:description",
+        content: "Sistema centralizado de gestão de documentos de clientes.",
+      },
+      {
+        name: "twitter:description",
+        content: "Sistema centralizado de gestão de documentos de clientes.",
+      },
+      {
+        property: "og:image",
+        content:
+          "https://pub-bb2e103a32db4e198524a2e9ed8f35b4.r2.dev/3f989cef-1339-4043-acec-85c5a7c0ce41/id-preview-e5447df8--eceaee76-b9e9-48df-a3dc-9fdd9a05517d.lovable.app-1780344041421.png",
+      },
+      {
+        name: "twitter:image",
+        content:
+          "https://pub-bb2e103a32db4e198524a2e9ed8f35b4.r2.dev/3f989cef-1339-4043-acec-85c5a7c0ce41/id-preview-e5447df8--eceaee76-b9e9-48df-a3dc-9fdd9a05517d.lovable.app-1780344041421.png",
+      },
       { name: "twitter:card", content: "summary_large_image" },
       { property: "og:type", content: "website" },
     ],
@@ -103,7 +118,9 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
 function RootShell({ children }: { children: ReactNode }) {
   return (
     <html lang="pt-BR">
-      <head><HeadContent /></head>
+      <head>
+        <HeadContent />
+      </head>
       <body>
         {children}
         <Scripts />

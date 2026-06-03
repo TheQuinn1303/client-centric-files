@@ -1,14 +1,16 @@
 import { createFileRoute, useNavigate, Link } from "@tanstack/react-router";
-import { useEffect, useState, type FormEvent } from "react";
+import { useEffect, useState, type FormEvent, useMemo } from "react";
 import { z } from "zod";
-import { FileText, Loader2 } from "lucide-react";
+import { Loader2 } from "lucide-react";
 import { toast } from "sonner";
+import { useQuery } from "@tanstack/react-query"; // Import useQuery
 
 import { supabase } from "@/integrations/supabase/client";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Card } from "@/components/ui/card";
+import logoSimm from "@/img/logo_simm.png";
 
 export const Route = createFileRoute("/login")({
   head: () => ({ meta: [{ title: "Entrar — DocFlow" }] }),
@@ -20,6 +22,10 @@ const schema = z.object({
   password: z.string().min(6, "Senha deve ter ao menos 6 caracteres").max(72),
   nome: z.string().trim().min(2).max(100).optional(),
 });
+
+type AppSettings = {
+  logo_url: string | null;
+};
 
 function LoginPage() {
   const navigate = useNavigate();
@@ -41,7 +47,11 @@ function LoginPage() {
 
   const handle = async (e: FormEvent) => {
     e.preventDefault();
-    const parsed = schema.safeParse({ email, password, nome: mode === "signup" ? nome : undefined });
+    const parsed = schema.safeParse({
+      email,
+      password,
+      nome: mode === "signup" ? nome : undefined,
+    });
     if (!parsed.success) {
       toast.error(parsed.error.issues[0].message);
       return;
@@ -71,25 +81,45 @@ function LoginPage() {
     }
   };
 
+  // Fetch global app settings for logo
+  const appSettings = useQuery({
+    queryKey: ["appSettings"],
+    queryFn: async () => {
+      const { data, error } = await supabase.from("app_settings").select("logo_url").single();
+      // PGRST116 é o código de erro para "nenhuma linha encontrada", o que é aceitável se o logo for opcional
+      if (error && error.code !== "PGRST116") throw error;
+      return data as AppSettings | null;
+    },
+    staleTime: Infinity, // As configurações da aplicação não mudam com frequência
+  });
+
+  const logoUrl = useMemo(() => appSettings.data?.logo_url, [appSettings.data]);
+
   return (
     <div className="min-h-screen grid lg:grid-cols-2 bg-background">
       <div className="hidden lg:flex flex-col justify-between p-12 bg-gradient-to-br from-primary/8 via-surface to-background border-r border-border">
         <Link to="/" className="flex items-center gap-2 font-display text-lg font-semibold">
-          <div className="grid h-9 w-9 place-items-center rounded-lg bg-primary text-primary-foreground">
-            <FileText className="h-5 w-5" />
-          </div>
-          DocFlow
+          {logoUrl ? ( // Se houver uma URL de logo, use a imagem
+            <img src={logoUrl} alt="Logo DocFlow" className="h-9 w-auto object-contain" />
+          ) : (
+            // Caso contrário, use a imagem local do Plano A
+            <img src={logoSimm} alt="Simm Computadores" className="h-9 w-auto object-contain" />
+          )}
+          Simm Computadores Documentação
         </Link>
         <div className="max-w-md space-y-4">
           <h1 className="font-display text-4xl font-semibold tracking-tight">
-            Centralize a documentação dos seus clientes.
+            Centralização de documentos SIMM Computadores.
           </h1>
           <p className="text-muted-foreground">
-            Substitua pastas de rede por um sistema moderno de armazenamento, busca e
-            auditoria — tudo em um só lugar.
+            Substuisão das pasta da documentação do servidor pra um sistema moderno de
+            armazenamento, busca e auditoria — tudo em um só lugar.
           </p>
         </div>
-        <p className="text-xs text-muted-foreground">© {new Date().getFullYear()} DocFlow</p>
+        <p className="text-xs text-muted-foreground">
+          {" "}
+          © {new Date().getFullYear()} Simm Computadores
+        </p>
       </div>
 
       <div className="flex items-center justify-center p-6">
@@ -109,16 +139,35 @@ function LoginPage() {
             {mode === "signup" && (
               <div className="space-y-2">
                 <Label htmlFor="nome">Nome</Label>
-                <Input id="nome" value={nome} onChange={(e) => setNome(e.target.value)} placeholder="Seu nome" />
+                <Input
+                  id="nome"
+                  value={nome}
+                  onChange={(e) => setNome(e.target.value)}
+                  placeholder="Seu nome"
+                />
               </div>
             )}
             <div className="space-y-2">
               <Label htmlFor="email">E-mail</Label>
-              <Input id="email" type="email" value={email} onChange={(e) => setEmail(e.target.value)} placeholder="voce@empresa.com" autoComplete="email" />
+              <Input
+                id="email"
+                type="email"
+                value={email}
+                onChange={(e) => setEmail(e.target.value)}
+                placeholder="voce@empresa.com"
+                autoComplete="email"
+              />
             </div>
             <div className="space-y-2">
               <Label htmlFor="password">Senha</Label>
-              <Input id="password" type="password" value={password} onChange={(e) => setPassword(e.target.value)} placeholder="••••••••" autoComplete={mode === "login" ? "current-password" : "new-password"} />
+              <Input
+                id="password"
+                type="password"
+                value={password}
+                onChange={(e) => setPassword(e.target.value)}
+                placeholder="••••••••"
+                autoComplete={mode === "login" ? "current-password" : "new-password"}
+              />
             </div>
             <Button type="submit" className="w-full" disabled={loading}>
               {loading && <Loader2 className="h-4 w-4 mr-2 animate-spin" />}
@@ -128,14 +177,24 @@ function LoginPage() {
 
           <div className="text-center text-sm text-muted-foreground">
             {mode === "login" ? (
-              <>Não tem conta?{" "}
-                <button type="button" onClick={() => setMode("signup")} className="text-primary font-medium hover:underline">
+              <>
+                Não tem conta?{" "}
+                <button
+                  type="button"
+                  onClick={() => setMode("signup")}
+                  className="text-primary font-medium hover:underline"
+                >
                   Cadastre-se
                 </button>
               </>
             ) : (
-              <>Já tem conta?{" "}
-                <button type="button" onClick={() => setMode("login")} className="text-primary font-medium hover:underline">
+              <>
+                Já tem conta?{" "}
+                <button
+                  type="button"
+                  onClick={() => setMode("login")}
+                  className="text-primary font-medium hover:underline"
+                >
                   Entrar
                 </button>
               </>

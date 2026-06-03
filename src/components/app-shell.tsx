@@ -134,7 +134,10 @@ export function AppShell({ children }: { children: ReactNode }) {
           </Link>
           <Sheet open={open} onOpenChange={setOpen}>
             <SheetTrigger asChild>
-              <Button variant="ghost" size="icon"><Search className="sr-only" /><Menu className="h-5 w-5" /></Button>
+              <Button variant="ghost" size="icon">
+                <Search className="sr-only" />
+                <Menu className="h-5 w-5" />
+              </Button>
             </SheetTrigger>
             <SheetContent side="left" className="p-0 w-64">
               <SidebarContent auth={auth} onNavigate={() => setOpen(false)} />
@@ -142,17 +145,21 @@ export function AppShell({ children }: { children: ReactNode }) {
           </Sheet>
         </header>
 
-        <main className="px-4 py-6 sm:px-8 sm:py-8 max-w-7xl mx-auto">
-          {children}
-        </main>
+        <main className="px-4 py-6 sm:px-8 sm:py-8 max-w-7xl mx-auto">{children}</main>
       </div>
     </div>
   );
 }
 
 export function PageHeader({
-  title, description, children,
-}: { title: string; description?: string; children?: ReactNode }) {
+  title,
+  description,
+  children,
+}: {
+  title: string;
+  description?: string;
+  children?: ReactNode;
+}) {
   return (
     <div className="mb-6 flex flex-col gap-4 sm:flex-row sm:items-end sm:justify-between">
       <div>

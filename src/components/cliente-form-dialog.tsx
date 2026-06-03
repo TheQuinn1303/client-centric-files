@@ -7,10 +7,18 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import {
-  Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter,
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+  DialogFooter,
 } from "@/components/ui/dialog";
 import {
-  Select, SelectContent, SelectItem, SelectTrigger, SelectValue,
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
 } from "@/components/ui/select";
 import { supabase } from "@/integrations/supabase/client";
 import { logAction } from "@/lib/auth";
@@ -39,7 +47,10 @@ export interface ClienteRow {
 }
 
 export function ClienteFormDialog({
-  open, onOpenChange, cliente, onSaved,
+  open,
+  onOpenChange,
+  cliente,
+  onSaved,
 }: {
   open: boolean;
   onOpenChange: (v: boolean) => void;
@@ -65,7 +76,10 @@ export function ClienteFormDialog({
   const submit = async (e: FormEvent) => {
     e.preventDefault();
     const parsed = schema.safeParse(form);
-    if (!parsed.success) { toast.error(parsed.error.issues[0].message); return; }
+    if (!parsed.success) {
+      toast.error(parsed.error.issues[0].message);
+      return;
+    }
     setSaving(true);
     try {
       const payload = {
@@ -84,8 +98,14 @@ export function ClienteFormDialog({
         await logAction({ acao: "update", entidade: "cliente", registro_id: cliente.id });
         toast.success("Cliente atualizado");
       } else {
-        const { data: { user } } = await supabase.auth.getUser();
-        const { data, error } = await supabase.from("clientes").insert({ ...payload, created_by: user?.id }).select("id").single();
+        const {
+          data: { user },
+        } = await supabase.auth.getUser();
+        const { data, error } = await supabase
+          .from("clientes")
+          .insert({ ...payload, created_by: user?.id })
+          .select("id")
+          .single();
         if (error) throw error;
         await logAction({ acao: "create", entidade: "cliente", registro_id: data.id });
         toast.success("Cliente cadastrado");
@@ -108,19 +128,33 @@ export function ClienteFormDialog({
         <form onSubmit={submit} className="grid grid-cols-1 sm:grid-cols-2 gap-4">
           <div className="space-y-2 sm:col-span-2">
             <Label>Razão Social *</Label>
-            <Input value={form.razao_social ?? ""} onChange={(e) => set("razao_social", e.target.value)} />
+            <Input
+              value={form.razao_social ?? ""}
+              onChange={(e) => set("razao_social", e.target.value)}
+            />
           </div>
           <div className="space-y-2">
             <Label>Nome Fantasia</Label>
-            <Input value={form.nome_fantasia ?? ""} onChange={(e) => set("nome_fantasia", e.target.value)} />
+            <Input
+              value={form.nome_fantasia ?? ""}
+              onChange={(e) => set("nome_fantasia", e.target.value)}
+            />
           </div>
           <div className="space-y-2">
             <Label>CNPJ</Label>
-            <Input value={form.cnpj ?? ""} onChange={(e) => set("cnpj", e.target.value)} placeholder="00.000.000/0000-00" />
+            <Input
+              value={form.cnpj ?? ""}
+              onChange={(e) => set("cnpj", e.target.value)}
+              placeholder="00.000.000/0000-00"
+            />
           </div>
           <div className="space-y-2">
             <Label>E-mail</Label>
-            <Input type="email" value={form.email ?? ""} onChange={(e) => set("email", e.target.value)} />
+            <Input
+              type="email"
+              value={form.email ?? ""}
+              onChange={(e) => set("email", e.target.value)}
+            />
           </div>
           <div className="space-y-2">
             <Label>Telefone</Label>
@@ -128,12 +162,20 @@ export function ClienteFormDialog({
           </div>
           <div className="space-y-2">
             <Label>Responsável</Label>
-            <Input value={form.responsavel ?? ""} onChange={(e) => set("responsavel", e.target.value)} />
+            <Input
+              value={form.responsavel ?? ""}
+              onChange={(e) => set("responsavel", e.target.value)}
+            />
           </div>
           <div className="space-y-2">
             <Label>Status</Label>
-            <Select value={form.status} onValueChange={(v) => set("status", v as "ativo" | "inativo")}>
-              <SelectTrigger><SelectValue /></SelectTrigger>
+            <Select
+              value={form.status}
+              onValueChange={(v) => set("status", v as "ativo" | "inativo")}
+            >
+              <SelectTrigger>
+                <SelectValue />
+              </SelectTrigger>
               <SelectContent>
                 <SelectItem value="ativo">Ativo</SelectItem>
                 <SelectItem value="inativo">Inativo</SelectItem>
@@ -142,11 +184,19 @@ export function ClienteFormDialog({
           </div>
           <div className="space-y-2 sm:col-span-2">
             <Label>Observações</Label>
-            <Textarea rows={3} value={form.observacoes ?? ""} onChange={(e) => set("observacoes", e.target.value)} />
+            <Textarea
+              rows={3}
+              value={form.observacoes ?? ""}
+              onChange={(e) => set("observacoes", e.target.value)}
+            />
           </div>
           <DialogFooter className="sm:col-span-2">
-            <Button type="button" variant="outline" onClick={() => onOpenChange(false)}>Cancelar</Button>
-            <Button type="submit" disabled={saving}>{saving ? "Salvando…" : "Salvar"}</Button>
+            <Button type="button" variant="outline" onClick={() => onOpenChange(false)}>
+              Cancelar
+            </Button>
+            <Button type="submit" disabled={saving}>
+              {saving ? "Salvando…" : "Salvar"}
+            </Button>
           </DialogFooter>
         </form>
       </DialogContent>

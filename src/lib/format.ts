@@ -2,19 +2,28 @@ export function formatDate(iso: string | null | undefined) {
   if (!iso) return "—";
   try {
     return new Date(iso).toLocaleDateString("pt-BR", {
-      day: "2-digit", month: "2-digit", year: "numeric",
+      day: "2-digit",
+      month: "2-digit",
+      year: "numeric",
     });
-  } catch { return "—"; }
+  } catch {
+    return "—";
+  }
 }
 
 export function formatDateTime(iso: string | null | undefined) {
   if (!iso) return "—";
   try {
     return new Date(iso).toLocaleString("pt-BR", {
-      day: "2-digit", month: "2-digit", year: "numeric",
-      hour: "2-digit", minute: "2-digit",
+      day: "2-digit",
+      month: "2-digit",
+      year: "numeric",
+      hour: "2-digit",
+      minute: "2-digit",
     });
-  } catch { return "—"; }
+  } catch {
+    return "—";
+  }
 }
 
 export function formatBytes(bytes: number | null | undefined) {

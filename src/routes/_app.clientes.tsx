@@ -14,8 +14,14 @@ import { Badge } from "@/components/ui/badge";
 import { ClienteFormDialog, type ClienteRow } from "@/components/cliente-form-dialog";
 import { formatCNPJ, formatDate } from "@/lib/format";
 import {
-  AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent,
-  AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle,
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
 } from "@/components/ui/alert-dialog";
 
 export const Route = createFileRoute("/_app/clientes")({
@@ -39,7 +45,9 @@ function ClientesPage() {
       let query = supabase.from("clientes").select("*").order("razao_social");
       if (q.trim()) {
         const term = `%${q.trim()}%`;
-        query = query.or(`razao_social.ilike.${term},nome_fantasia.ilike.${term},cnpj.ilike.${term}`);
+        query = query.or(
+          `razao_social.ilike.${term},nome_fantasia.ilike.${term},cnpj.ilike.${term}`,
+        );
       }
       const { data, error } = await query;
       if (error) throw error;
@@ -50,7 +58,10 @@ function ClientesPage() {
   const handleDelete = async () => {
     if (!delTarget?.id) return;
     const { error } = await supabase.from("clientes").delete().eq("id", delTarget.id);
-    if (error) { toast.error(error.message); return; }
+    if (error) {
+      toast.error(error.message);
+      return;
+    }
     await logAction({ acao: "delete", entidade: "cliente", registro_id: delTarget.id });
     toast.success("Cliente excluído");
     setDelTarget(null);
@@ -61,7 +72,12 @@ function ClientesPage() {
     <div>
       <PageHeader title="Clientes" description="Gerencie os clientes da sua organização.">
         {isAdmin && (
-          <Button onClick={() => { setEditing(null); setOpen(true); }}>
+          <Button
+            onClick={() => {
+              setEditing(null);
+              setOpen(true);
+            }}
+          >
             <Plus className="h-4 w-4 mr-1" /> Novo cliente
           </Button>
         )}
@@ -88,7 +104,9 @@ function ClientesPage() {
           <div></div>
         </div>
         <div className="divide-y divide-border">
-          {list.isLoading && <div className="p-8 text-sm text-muted-foreground text-center">Carregando…</div>}
+          {list.isLoading && (
+            <div className="p-8 text-sm text-muted-foreground text-center">Carregando…</div>
+          )}
           {!list.isLoading && (list.data?.length ?? 0) === 0 && (
             <div className="p-12 text-center">
               <Building2 className="h-10 w-10 mx-auto text-muted-foreground/50" />
@@ -96,14 +114,24 @@ function ClientesPage() {
             </div>
           )}
           {list.data?.map((c) => (
-            <div key={c.id} className="grid grid-cols-1 md:grid-cols-[2fr_1.4fr_1fr_1fr_auto] gap-2 md:gap-4 px-5 py-4 items-center hover:bg-accent/30 transition-colors">
+            <div
+              key={c.id}
+              className="grid grid-cols-1 md:grid-cols-[2fr_1.4fr_1fr_1fr_auto] gap-2 md:gap-4 px-5 py-4 items-center hover:bg-accent/30 transition-colors"
+            >
               <Link to="/clientes/$id" params={{ id: c.id }} className="min-w-0">
                 <p className="font-medium truncate">{c.razao_social}</p>
-                {c.nome_fantasia && <p className="text-xs text-muted-foreground truncate">{c.nome_fantasia}</p>}
+                {c.nome_fantasia && (
+                  <p className="text-xs text-muted-foreground truncate">{c.nome_fantasia}</p>
+                )}
               </Link>
               <div className="text-sm text-muted-foreground">{formatCNPJ(c.cnpj)}</div>
               <div>
-                <Badge variant={c.status === "ativo" ? "default" : "secondary"} className={c.status === "ativo" ? "bg-success/15 text-success hover:bg-success/20" : ""}>
+                <Badge
+                  variant={c.status === "ativo" ? "default" : "secondary"}
+                  className={
+                    c.status === "ativo" ? "bg-success/15 text-success hover:bg-success/20" : ""
+                  }
+                >
                   {c.status}
                 </Badge>
               </div>
@@ -111,7 +139,14 @@ function ClientesPage() {
               <div className="flex gap-1 justify-end">
                 {isAdmin && (
                   <>
-                    <Button variant="ghost" size="icon" onClick={() => { setEditing(c); setOpen(true); }}>
+                    <Button
+                      variant="ghost"
+                      size="icon"
+                      onClick={() => {
+                        setEditing(c);
+                        setOpen(true);
+                      }}
+                    >
                       <Pencil className="h-4 w-4" />
                     </Button>
                     <Button variant="ghost" size="icon" onClick={() => setDelTarget(c)}>
@@ -139,12 +174,18 @@ function ClientesPage() {
           <AlertDialogHeader>
             <AlertDialogTitle>Excluir cliente?</AlertDialogTitle>
             <AlertDialogDescription>
-              Esta ação irá excluir <strong>{delTarget?.razao_social}</strong> e todos os documentos vinculados. Não pode ser desfeita.
+              Esta ação irá excluir <strong>{delTarget?.razao_social}</strong> e todos os documentos
+              vinculados. Não pode ser desfeita.
             </AlertDialogDescription>
           </AlertDialogHeader>
           <AlertDialogFooter>
             <AlertDialogCancel>Cancelar</AlertDialogCancel>
-            <AlertDialogAction onClick={handleDelete} className="bg-destructive text-destructive-foreground hover:bg-destructive/90">Excluir</AlertDialogAction>
+            <AlertDialogAction
+              onClick={handleDelete}
+              className="bg-destructive text-destructive-foreground hover:bg-destructive/90"
+            >
+              Excluir
+            </AlertDialogAction>
           </AlertDialogFooter>
         </AlertDialogContent>
       </AlertDialog>

@@ -2,8 +2,18 @@ import { createFileRoute, useParams, Link } from "@tanstack/react-router";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { useState } from "react";
 import {
-  ArrowLeft, Building2, Download, FileText, History, Pencil,
-  Plus, Trash2, GitBranch, Mail, Phone, User as UserIcon,
+  ArrowLeft,
+  Building2,
+  Download,
+  FileText,
+  History,
+  Pencil,
+  Plus,
+  Trash2,
+  GitBranch,
+  Mail,
+  Phone,
+  User as UserIcon,
 } from "lucide-react";
 import { toast } from "sonner";
 
@@ -18,8 +28,14 @@ import { formatBytes, formatCNPJ, formatDate, formatDateTime } from "@/lib/forma
 import { ClienteFormDialog } from "@/components/cliente-form-dialog";
 import { UploadDocumentDialog } from "@/components/upload-document-dialog";
 import {
-  AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent,
-  AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle,
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
 } from "@/components/ui/alert-dialog";
 
 export const Route = createFileRoute("/_app/clientes/$id")({
@@ -63,8 +79,11 @@ function ClienteDetail() {
     queryKey: ["cliente-logs", id],
     queryFn: async () => {
       const { data, error } = await supabase
-        .from("logs").select("*")
-        .eq("registro_id", id).order("data_hora", { ascending: false }).limit(50);
+        .from("logs")
+        .select("*")
+        .eq("registro_id", id)
+        .order("data_hora", { ascending: false })
+        .limit(50);
       if (error) throw error;
       return data ?? [];
     },
@@ -79,8 +98,13 @@ function ClienteDetail() {
   });
 
   const download = async (d: any) => {
-    const { data, error } = await supabase.storage.from("documentos").createSignedUrl(d.caminho_storage, 60);
-    if (error) { toast.error(error.message); return; }
+    const { data, error } = await supabase.storage
+      .from("documentos")
+      .createSignedUrl(d.caminho_storage, 60);
+    if (error) {
+      toast.error(error.message);
+      return;
+    }
     await logAction({ acao: "download", entidade: "documento", registro_id: d.id });
     window.open(data.signedUrl, "_blank");
   };
@@ -89,7 +113,10 @@ function ClienteDetail() {
     if (!delDoc) return;
     await supabase.storage.from("documentos").remove([delDoc.caminho_storage]);
     const { error } = await supabase.from("documentos").delete().eq("id", delDoc.id);
-    if (error) { toast.error(error.message); return; }
+    if (error) {
+      toast.error(error.message);
+      return;
+    }
     await logAction({ acao: "delete", entidade: "documento", registro_id: delDoc.id });
     toast.success("Documento excluído");
     setDelDoc(null);
@@ -97,13 +124,17 @@ function ClienteDetail() {
   };
 
   if (cliente.isLoading) return <div className="text-sm text-muted-foreground">Carregando…</div>;
-  if (!cliente.data) return <div className="text-sm text-muted-foreground">Cliente não encontrado.</div>;
+  if (!cliente.data)
+    return <div className="text-sm text-muted-foreground">Cliente não encontrado.</div>;
 
   const c = cliente.data;
 
   return (
     <div>
-      <Link to="/clientes" className="inline-flex items-center gap-1 text-sm text-muted-foreground hover:text-foreground mb-4">
+      <Link
+        to="/clientes"
+        className="inline-flex items-center gap-1 text-sm text-muted-foreground hover:text-foreground mb-4"
+      >
         <ArrowLeft className="h-4 w-4" /> Voltar
       </Link>
 
@@ -113,7 +144,12 @@ function ClienteDetail() {
             <Button variant="outline" onClick={() => setEditOpen(true)}>
               <Pencil className="h-4 w-4 mr-1" /> Editar
             </Button>
-            <Button onClick={() => { setVersionOf(null); setUploadOpen(true); }}>
+            <Button
+              onClick={() => {
+                setVersionOf(null);
+                setUploadOpen(true);
+              }}
+            >
               <Plus className="h-4 w-4 mr-1" /> Documento
             </Button>
           </>
@@ -126,7 +162,9 @@ function ClienteDetail() {
             <div className="grid h-11 w-11 place-items-center rounded-lg bg-primary/10 text-primary">
               <Building2 className="h-5 w-5" />
             </div>
-            <Badge className={c.status === "ativo" ? "bg-success/15 text-success" : ""}>{c.status}</Badge>
+            <Badge className={c.status === "ativo" ? "bg-success/15 text-success" : ""}>
+              {c.status}
+            </Badge>
           </div>
           <dl className="space-y-3 text-sm">
             <Field label="CNPJ" value={formatCNPJ(c.cnpj)} />
@@ -137,7 +175,9 @@ function ClienteDetail() {
           </dl>
           {c.observacoes && (
             <div className="pt-3 border-t border-border">
-              <p className="text-xs uppercase tracking-wide text-muted-foreground mb-1">Observações</p>
+              <p className="text-xs uppercase tracking-wide text-muted-foreground mb-1">
+                Observações
+              </p>
               <p className="text-sm whitespace-pre-wrap">{c.observacoes}</p>
             </div>
           )}
@@ -146,14 +186,20 @@ function ClienteDetail() {
         <div className="lg:col-span-2">
           <Tabs defaultValue="docs">
             <TabsList>
-              <TabsTrigger value="docs"><FileText className="h-4 w-4 mr-1" /> Documentos</TabsTrigger>
-              <TabsTrigger value="logs"><History className="h-4 w-4 mr-1" /> Histórico</TabsTrigger>
+              <TabsTrigger value="docs">
+                <FileText className="h-4 w-4 mr-1" /> Documentos
+              </TabsTrigger>
+              <TabsTrigger value="logs">
+                <History className="h-4 w-4 mr-1" /> Histórico
+              </TabsTrigger>
             </TabsList>
             <TabsContent value="docs">
               <Card className="overflow-hidden">
                 <div className="divide-y divide-border">
                   {(docs.data?.length ?? 0) === 0 && (
-                    <div className="p-10 text-center text-sm text-muted-foreground">Nenhum documento.</div>
+                    <div className="p-10 text-center text-sm text-muted-foreground">
+                      Nenhum documento.
+                    </div>
                   )}
                   {docs.data?.map((d: any) => (
                     <div key={d.id} className="flex items-center gap-3 p-4 hover:bg-accent/30">
@@ -163,19 +209,38 @@ function ClienteDetail() {
                       <div className="flex-1 min-w-0">
                         <p className="font-medium truncate">{d.nome_original}</p>
                         <p className="text-xs text-muted-foreground truncate">
-                          {d.categoria?.nome ?? "Sem categoria"} · v{d.versao} · {formatBytes(d.tamanho)} · {formatDate(d.created_at)}
+                          {d.categoria?.nome ?? "Sem categoria"} · v{d.versao} ·{" "}
+                          {formatBytes(d.tamanho)} · {formatDate(d.created_at)}
                         </p>
                       </div>
                       <div className="flex gap-1">
-                        <Button variant="ghost" size="icon" onClick={() => download(d)} title="Download">
+                        <Button
+                          variant="ghost"
+                          size="icon"
+                          onClick={() => download(d)}
+                          title="Download"
+                        >
                           <Download className="h-4 w-4" />
                         </Button>
                         {isAdmin && (
                           <>
-                            <Button variant="ghost" size="icon" title="Nova versão" onClick={() => { setVersionOf(d); setUploadOpen(true); }}>
+                            <Button
+                              variant="ghost"
+                              size="icon"
+                              title="Nova versão"
+                              onClick={() => {
+                                setVersionOf(d);
+                                setUploadOpen(true);
+                              }}
+                            >
                               <GitBranch className="h-4 w-4" />
                             </Button>
-                            <Button variant="ghost" size="icon" onClick={() => setDelDoc(d)} title="Excluir">
+                            <Button
+                              variant="ghost"
+                              size="icon"
+                              onClick={() => setDelDoc(d)}
+                              title="Excluir"
+                            >
                               <Trash2 className="h-4 w-4 text-destructive" />
                             </Button>
                           </>
@@ -190,13 +255,19 @@ function ClienteDetail() {
               <Card className="overflow-hidden">
                 <div className="divide-y divide-border">
                   {(logs.data?.length ?? 0) === 0 && (
-                    <div className="p-10 text-center text-sm text-muted-foreground">Sem atividade registrada.</div>
+                    <div className="p-10 text-center text-sm text-muted-foreground">
+                      Sem atividade registrada.
+                    </div>
                   )}
                   {logs.data?.map((l) => (
                     <div key={l.id} className="p-4 text-sm">
                       <div className="flex justify-between gap-3">
-                        <span><strong>{l.usuario_nome ?? "—"}</strong> · {l.acao}</span>
-                        <span className="text-xs text-muted-foreground">{formatDateTime(l.data_hora)}</span>
+                        <span>
+                          <strong>{l.usuario_nome ?? "—"}</strong> · {l.acao}
+                        </span>
+                        <span className="text-xs text-muted-foreground">
+                          {formatDateTime(l.data_hora)}
+                        </span>
                       </div>
                     </div>
                   ))}
@@ -209,14 +280,16 @@ function ClienteDetail() {
 
       {editOpen && (
         <ClienteFormDialog
-          open={editOpen} onOpenChange={setEditOpen}
+          open={editOpen}
+          onOpenChange={setEditOpen}
           cliente={c}
           onSaved={() => qc.invalidateQueries({ queryKey: ["cliente", id] })}
         />
       )}
       {uploadOpen && (
         <UploadDocumentDialog
-          open={uploadOpen} onOpenChange={setUploadOpen}
+          open={uploadOpen}
+          onOpenChange={setUploadOpen}
           clientes={[{ id: c.id, razao_social: c.razao_social }]}
           categorias={categorias.data ?? []}
           defaultClienteId={c.id}
@@ -232,7 +305,12 @@ function ClienteDetail() {
           </AlertDialogHeader>
           <AlertDialogFooter>
             <AlertDialogCancel>Cancelar</AlertDialogCancel>
-            <AlertDialogAction onClick={handleDelDoc} className="bg-destructive text-destructive-foreground hover:bg-destructive/90">Excluir</AlertDialogAction>
+            <AlertDialogAction
+              onClick={handleDelDoc}
+              className="bg-destructive text-destructive-foreground hover:bg-destructive/90"
+            >
+              Excluir
+            </AlertDialogAction>
           </AlertDialogFooter>
         </AlertDialogContent>
       </AlertDialog>

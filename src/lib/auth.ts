@@ -46,7 +46,10 @@ export function useAuth(): AuthState {
     });
     supabase.auth.getSession().then(({ data }) => load(data.session?.user ?? null));
 
-    return () => { mounted = false; sub.subscription.unsubscribe(); };
+    return () => {
+      mounted = false;
+      sub.subscription.unsubscribe();
+    };
   }, []);
 
   return state;
@@ -58,9 +61,15 @@ export async function logAction(opts: {
   registro_id?: string | null;
   detalhes?: Record<string, unknown>;
 }) {
-  const { data: { user } } = await supabase.auth.getUser();
+  const {
+    data: { user },
+  } = await supabase.auth.getUser();
   if (!user) return;
-  const { data: prof } = await supabase.from("profiles").select("nome").eq("id", user.id).maybeSingle();
+  const { data: prof } = await supabase
+    .from("profiles")
+    .select("nome")
+    .eq("id", user.id)
+    .maybeSingle();
   await supabase.from("logs").insert({
     usuario_id: user.id,
     usuario_nome: prof?.nome ?? user.email,
