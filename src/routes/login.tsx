@@ -13,7 +13,7 @@ import { Card } from "@/components/ui/card";
 import logoSimm from "@/img/logo_simm.png";
 
 export const Route = createFileRoute("/login")({
-  head: () => ({ meta: [{ title: "Entrar — DocFlow" }] }),
+  head: () => ({ meta: [{ title: "Entrar — SimmDocs" }] }),
   component: LoginPage,
 });
 
