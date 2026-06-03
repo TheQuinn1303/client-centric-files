@@ -96,34 +96,38 @@ function LoginPage() {
   const logoUrl = useMemo(() => appSettings.data?.logo_url, [appSettings.data]);
 
   return (
-    <div className="min-h-screen grid lg:grid-cols-2 bg-background">
-      <div className="hidden lg:flex flex-col justify-between p-12 bg-gradient-to-br from-primary/8 via-surface to-background border-r border-border">
-        <Link to="/" className="flex items-center gap-2 font-display text-lg font-semibold">
+    <div className="min-h-screen grid lg:grid-cols-2 bg-gradient-to-br from-[#02347c] via-[#054a91] to-[#b6dbf4]">
+      <div className="hidden lg:flex flex-col justify-between p-12 text-white">
+        <Link
+          to="/"
+          className="flex items-center gap-2 font-display text-lg font-semibold text-white"
+        >
           {logoUrl ? ( // Se houver uma URL de logo, use a imagem
             <img src={logoUrl} alt="Logo DocFlow" className="h-9 w-auto object-contain" />
           ) : (
             // Caso contrário, use a imagem local do Plano A
-            <img src={logoSimm} alt="Simm Computadores" className="h-9 w-auto object-contain" />
+            <img
+              src={logoSimm}
+              alt="Simm Computadores"
+              className="h-10 w-auto object-contain brightness-0 invert"
+            />
           )}
           Simm Computadores Documentação
         </Link>
         <div className="max-w-md space-y-4">
-          <h1 className="font-display text-4xl font-semibold tracking-tight">
+          <h1 className="font-display text-5xl font-bold tracking-tight leading-tight">
             Centralização de documentos SIMM Computadores.
           </h1>
-          <p className="text-muted-foreground">
+          <p className="text-white/80">
             Substuisão das pasta da documentação do servidor pra um sistema moderno de
             armazenamento, busca e auditoria — tudo em um só lugar.
           </p>
         </div>
-        <p className="text-xs text-muted-foreground">
-          {" "}
-          © {new Date().getFullYear()} Simm Computadores
-        </p>
+        <p className="text-xs text-white/60"> © {new Date().getFullYear()} Simm Computadores</p>
       </div>
 
-      <div className="flex items-center justify-center p-6">
-        <Card className="w-full max-w-md p-8 space-y-6">
+      <div className="flex items-center justify-center p-6 bg-white/5 lg:bg-transparent backdrop-blur-sm lg:backdrop-blur-0">
+        <Card className="w-full max-w-md p-8 space-y-6 bg-white/95 shadow-2xl border-none">
           <div>
             <h2 className="font-display text-2xl font-semibold">
               {mode === "login" ? "Entrar" : "Criar conta"}
