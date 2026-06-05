@@ -1,11 +1,15 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { useQuery } from "@tanstack/react-query";
-import { Users, FileText, CalendarDays, TrendingUp } from "lucide-react";
+import { Users, FileText, CalendarDays, TrendingUp, Upload as UploadIcon } from "lucide-react";
+import { useState } from "react";
 
 import { supabase } from "@/integrations/supabase/client";
+import { useAuth } from "@/lib/auth";
 import { PageHeader } from "@/components/app-shell";
 import { Card } from "@/components/ui/card";
+import { Button } from "@/components/ui/button";
 import { formatDate, formatBytes } from "@/lib/format";
+import { UploadDocumentDialog } from "@/components/upload-document-dialog";
 
 export const Route = createFileRoute("/_app/dashboard")({
   head: () => ({ meta: [{ title: "Dashboard — SimmDocs" }] }),
@@ -39,6 +43,9 @@ function StatCard({
 }
 
 function DashboardPage() {
+  const auth = useAuth();
+  const [uploadOpen, setUploadOpen] = useState(false);
+
   const stats = useQuery({
     queryKey: ["dashboard-stats"],
     queryFn: async () => {
@@ -69,9 +76,30 @@ function DashboardPage() {
     },
   });
 
+  const clientes = useQuery({
+    queryKey: ["clientes-min"],
+    queryFn: async () =>
+      (await supabase.from("clientes").select("id, razao_social").order("razao_social")).data ?? [],
+  });
+
+  const categorias = useQuery({
+    queryKey: ["categorias"],
+    queryFn: async () =>
+      (await supabase.from("categorias").select("id, nome").order("nome")).data ?? [],
+  });
+
   return (
     <div>
-      <PageHeader title="Dashboard - Simm Docs" description="Visão geral do sistema." />
+      <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 mb-6">
+        <PageHeader title="Dashboard - Simm Docs" description="Visão geral do sistema." />
+
+        {auth.role === "admin" && (
+          <Button onClick={() => setUploadOpen(true)} className="w-full sm:w-auto">
+            <UploadIcon className="h-4 w-4 mr-2" />
+            Enviar documento
+          </Button>
+        )}
+      </div>
 
       <div className="grid gap-4 grid-cols-1 sm:grid-cols-2 lg:grid-cols-4">
         <StatCard icon={Users} label="Clientes" value={stats.data?.clientes ?? "—"} />
@@ -132,6 +160,15 @@ function DashboardPage() {
           ))}
         </div>
       </Card>
+
+      {clientes.data && categorias.data && (
+        <UploadDocumentDialog
+          open={uploadOpen}
+          onOpenChange={setUploadOpen}
+          clientes={clientes.data}
+          categorias={categorias.data}
+        />
+      )}
     </div>
   );
 }
