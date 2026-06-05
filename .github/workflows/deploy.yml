@@ -1,0 +1,51 @@
+name: Deploy to GitHub Pages
+
+on:
+  push:
+    branches:
+      - main # Roda o deploy automaticamente sempre que você der push na main
+
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+
+jobs:
+  build-and-deploy:
+    environment:
+      name: github-pages
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout do código
+        uses: actions/checkout@v4
+
+      - name: Instalar o Bun
+        uses: oven-sh/setup-bun@v1
+        with:
+          bun-version: latest
+
+      - name: Instalar dependências
+        run: bun install
+
+      - name: Rodar o Build do Projeto
+        run: bun run build
+        env:
+          # Aqui nós conectamos o seu código aos Secrets que você acabou de criar no print
+          VITE_SUPABASE_URL: ${{ secrets.VITE_SUPABASE_URL }}
+          VITE_SUPABASE_PUBLISHABLE_KEY: ${{ secrets.VITE_SUPABASE_PUBLISHABLE_KEY }}
+          VITE_SUPABASE_PROJECT_ID: ${{ secrets.VITE_SUPABASE_PROJECT_ID }}
+          SUPABASE_URL: ${{ secrets.SUPABASE_URL }}
+          SUPABASE_PUBLISHABLE_KEY: ${{ secrets.SUPABASE_PUBLISHABLE_KEY }}
+
+      - name: Configurar Páginas
+        uses: actions/configure-pages@v4
+
+      - name: Upload do artefato
+        uses: actions/upload-pages-artifact@v3
+        with:
+          # O TanStack Start costuma gerar o build estático na pasta '.output/public' ou 'dist'
+          # Se o seu deploy concluir mas der erro de página em branco, mude aqui para './dist'
+          path: "./.output/public"
+
+      - name: Deploy para o GitHub Pages
+        uses: actions/deploy-pages@v4
