@@ -45,7 +45,13 @@ function DocumentosPage() {
     queryFn: async () => {
       let query = supabase
         .from("documentos")
-        .select("*, cliente:clientes(id, razao_social, cnpj), categoria:categorias(id, nome)")
+        .select(
+          `
+          *,
+          cliente:clientes(id, razao_social, cnpj),
+          categoria:categorias(id, nome)
+        `,
+        )
         .order("created_at", { ascending: false })
         .limit(200);
 
@@ -53,9 +59,29 @@ function DocumentosPage() {
       if (cat !== "all") query = query.eq("categoria_id", cat);
       if (cliId !== "all") query = query.eq("cliente_id", cliId);
 
-      const { data, error } = await query;
-      if (error) throw error;
-      return data ?? [];
+      const { data: docs, error: docsError } = await query;
+      if (docsError) throw docsError;
+      if (!docs || docs.length === 0) return [];
+
+      // Agrupa os IDs de usuários únicos que enviaram os documentos
+      const userIds = Array.from(new Set(docs.map((d: any) => d.created_by).filter(Boolean)));
+
+      if (userIds.length > 0) {
+        const { data: profiles } = await supabase
+          .from("profiles")
+          .select("id, nome")
+          .in("id", userIds);
+
+        if (profiles) {
+          const profileMap = new Map(profiles.map((p) => [p.id, p.nome]));
+          return docs.map((d: any) => ({
+            ...d,
+            profile: { nome: profileMap.get(d.created_by) || "Sistema" },
+          }));
+        }
+      }
+
+      return docs.map((d: any) => ({ ...d, profile: null }));
     },
   });
 
