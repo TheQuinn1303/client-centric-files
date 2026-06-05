@@ -45,14 +45,14 @@ function DocumentosPage() {
     queryFn: async () => {
       let query = supabase
         .from("documentos")
-        .select(
-          "*, cliente:clientes(id, razao_social, cnpj), categoria:categorias(id, nome), profile:profiles!documentos_created_by_fkey(nome)",
-        )
+        .select("*, cliente:clientes(id, razao_social, cnpj), categoria:categorias(id, nome)")
         .order("created_at", { ascending: false })
         .limit(200);
+
       if (q.trim()) query = query.ilike("nome_original", `%${q.trim()}%`);
       if (cat !== "all") query = query.eq("categoria_id", cat);
       if (cliId !== "all") query = query.eq("cliente_id", cliId);
+
       const { data, error } = await query;
       if (error) throw error;
       return data ?? [];

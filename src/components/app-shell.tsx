@@ -2,9 +2,9 @@ import { Link, useNavigate, useRouterState } from "@tanstack/react-router";
 import {
   LayoutDashboard,
   Users,
-  FileText,
   Upload,
   Search,
+  FileText,
   Settings,
   LogOut,
   Menu,
@@ -18,6 +18,7 @@ import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
 import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet";
 import { Avatar, AvatarFallback } from "@/components/ui/avatar";
+import logoSimm from "@/img/logo_simm.png";
 
 interface NavItem {
   to: string;
@@ -44,9 +45,13 @@ function SidebarContent({ auth, onNavigate }: { auth: AuthState; onNavigate?: ()
     <div className="flex h-full flex-col bg-sidebar text-sidebar-foreground">
       <div className="flex h-16 items-center gap-2 px-6 border-b border-sidebar-border">
         <div className="grid h-8 w-8 place-items-center rounded-md bg-primary text-primary-foreground">
-          <Logo className="h-4 w-4" />
+          <img
+            src={logoSimm}
+            alt="Simm Docs"
+            className="h-6 w-6 object-contain brightness-0 invert"
+          />{" "}
         </div>
-        <span className="font-display text-lg font-semibold">DocFlow</span>
+        <span className="font-display text-lg font-semibold">Simm Docs</span>
       </div>
 
       <nav className="flex-1 px-3 py-4 space-y-1">
@@ -128,7 +133,12 @@ export function AppShell({ children }: { children: ReactNode }) {
         <header className="lg:hidden sticky top-0 z-30 flex h-14 items-center justify-between border-b border-border bg-background/80 backdrop-blur px-4">
           <Link to="/dashboard" className="flex items-center gap-2 font-display font-semibold">
             <div className="grid h-7 w-7 place-items-center rounded-md bg-primary text-primary-foreground">
-              <Logo className="h-3.5 w-3.5" />
+              <img
+                src={logoSimm}
+                alt="DocFlow"
+                className="h-3.5 w-3.5 object-contain brightness-0 invert"
+              />{" "}
+              {/* Substitua o ícone aqui */}
             </div>
             DocFlow
           </Link>
@@ -145,7 +155,7 @@ export function AppShell({ children }: { children: ReactNode }) {
           </Sheet>
         </header>
 
-        <main className="px-4 py-6 sm:px-8 sm:py-8 max-w-7xl mx-auto">{children}</main>
+        <main className="px-4 py-6 sm:px-8 sm:py-8 max-w-full">{children}</main>
       </div>
     </div>
   );

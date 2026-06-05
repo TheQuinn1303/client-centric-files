@@ -74,10 +74,10 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
     meta: [
       { charSet: "utf-8" },
       { name: "viewport", content: "width=device-width, initial-scale=1" },
-      { title: "DocFlow — Gestão de Documentos" },
+      { title: "SimmDocs — Gestão de Documentos" },
       { name: "description", content: "Sistema centralizado de gestão de documentos de clientes." },
-      { property: "og:title", content: "DocFlow — Gestão de Documentos" },
-      { name: "twitter:title", content: "DocFlow — Gestão de Documentos" },
+      { property: "og:title", content: "SimmDocs — Gestão de Documentos" },
+      { name: "twitter:title", content: "SimmDocs — Gestão de Documentos" },
       {
         property: "og:description",
         content: "Sistema centralizado de gestão de documentos de clientes.",

@@ -8,7 +8,7 @@ import { Card } from "@/components/ui/card";
 import { formatDate, formatBytes } from "@/lib/format";
 
 export const Route = createFileRoute("/_app/dashboard")({
-  head: () => ({ meta: [{ title: "Dashboard — DocFlow" }] }),
+  head: () => ({ meta: [{ title: "Dashboard — SimmDocs" }] }),
   component: DashboardPage,
 });
 
@@ -71,7 +71,7 @@ function DashboardPage() {
 
   return (
     <div>
-      <PageHeader title="Dashboard" description="Visão geral do sistema." />
+      <PageHeader title="Dashboard - Simm Docs" description="Visão geral do sistema." />
 
       <div className="grid gap-4 grid-cols-1 sm:grid-cols-2 lg:grid-cols-4">
         <StatCard icon={Users} label="Clientes" value={stats.data?.clientes ?? "—"} />
