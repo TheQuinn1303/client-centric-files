@@ -51,10 +51,24 @@ docker run -p 3000:3000 -e PORT=3000 -e VITE_SUPABASE_URL="https://..." -e VITE_
 
 ### Railway
 
-- Connect your GitHub repo
-- Set build command: `npm run build`
-- Set start command: `npm start`
-- Add env vars in Railway project settings
+Railway é uma boa opção para conectar diretamente ao seu repositório GitHub e obter uma URL pública.
+
+- Conecte seu repositório GitHub.
+- Build command: `npm ci && npm run build`
+- Start command: `npm start`
+- Environment: Node 20
+
+Adicione as variáveis de ambiente na aba `Variables` do projeto Railway:
+- `VITE_SUPABASE_URL`
+- `VITE_SUPABASE_PUBLISHABLE_KEY`
+- `SUPABASE_URL`
+- `SUPABASE_PUBLISHABLE_KEY`
+
+Se quiser, também pode adicionar:
+- `SUPABASE_SERVICE_ROLE_KEY` (se usar funções server-side seguras)
+
+Quando o deploy finalizar, Railway fornecerá uma URL pública como:
+`https://<project-name>.up.railway.app`
 
 ### Any Docker-compatible host
 
